@@ -1,0 +1,1196 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Игра «Денежный поток» в Москве — тренажёр финансовых решений</title>
+<meta name="description" content="Настольная игра «Денежный поток» (CASHFLOW) в Москве с финансовым советником Олегом Ивановым. 4 часа: правила, игра, разбор. 5 000 ₽, за столом 4–8 человек.">
+<meta property="og:title" content="Игра «Денежный поток» в Москве">
+<meta property="og:description" content="4 часа за игровым столом: правила, игра, разбор от финансового советника. 5 000 ₽ за игрока, при покупке двух билетов — третий в подарок.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:image" content="assets/games/game-1.jpg">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23111418'/%3E%3Ccircle cx='30' cy='30' r='9' fill='%23F6F1E8'/%3E%3Ccircle cx='70' cy='30' r='9' fill='%23B89766'/%3E%3Ccircle cx='50' cy='50' r='9' fill='%23F6F1E8'/%3E%3Ccircle cx='30' cy='70' r='9' fill='%238F3A32'/%3E%3Ccircle cx='70' cy='70' r='9' fill='%23F6F1E8'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ivory:#F6F1E8;
+  --ivory-deep:#EFE7D8;
+  --graphite:#2E3134;
+  --ink:#111418;
+  --gold:#B89766;
+  --gold-soft:rgba(184,151,102,.14);
+  --risk:#8F3A32;
+  --navy:#0A1628;
+  --serif:'Playfair Display',Georgia,serif;
+  --sans:'Inter',-apple-system,sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--sans);
+  background:var(--ivory);
+  color:var(--graphite);
+  font-size:17px;
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+::selection{background:var(--gold);color:#fff}
+
+/* полоса прогресса — игровая дорожка */
+.progress{
+  position:fixed;top:0;left:0;height:3px;width:0;z-index:200;
+  background:linear-gradient(90deg,var(--gold),var(--risk));
+  transition:width .1s linear;
+}
+/* всплывающее уведомление */
+.toast{
+  position:fixed;left:50%;bottom:34px;transform:translate(-50%,140%);
+  z-index:300;max-width:min(440px,92vw);
+  background:var(--ink);color:var(--ivory);
+  padding:15px 24px;border-radius:100px;
+  font-size:14.5px;font-weight:500;text-align:center;
+  box-shadow:0 20px 50px -18px rgba(17,20,24,.7);
+  transition:transform .45s cubic-bezier(.2,.8,.3,1);
+}
+.toast.on{transform:translate(-50%,0)}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
+/* бумажное зерно */
+body::after{
+  content:"";position:fixed;inset:0;z-index:999;pointer-events:none;opacity:.05;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ---------- шапка ---------- */
+header{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:18px clamp(20px,5vw,64px);
+  transition:background .35s,box-shadow .35s,padding .35s;
+}
+header.scrolled{
+  background:rgba(246,241,232,.92);
+  backdrop-filter:blur(12px);
+  box-shadow:0 1px 0 rgba(17,20,24,.08);
+  padding:12px clamp(20px,5vw,64px);
+}
+.logo{font-family:var(--serif);font-weight:700;font-size:20px;color:var(--ink);text-decoration:none;letter-spacing:.02em}
+.logo em{font-style:italic;color:var(--gold)}
+nav{display:flex;gap:28px;align-items:center}
+nav a{color:var(--graphite);text-decoration:none;font-size:14px;font-weight:500;letter-spacing:.02em;transition:color .2s}
+nav a:hover{color:var(--gold)}
+.nav-cta{
+  background:var(--ink);color:var(--ivory)!important;
+  padding:10px 22px;border-radius:100px;font-weight:600;
+  transition:background .25s,transform .25s;
+}
+.nav-cta:hover{background:var(--risk);transform:translateY(-1px)}
+@media(max-width:760px){nav a:not(.nav-cta){display:none}}
+
+/* ---------- hero ---------- */
+.hero{
+  min-height:100svh;
+  display:grid;
+  align-content:center;
+  padding:140px clamp(20px,5vw,64px) 80px;
+  position:relative;
+}
+.hero::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(60% 50% at 85% 20%,rgba(184,151,102,.12),transparent 70%),
+    radial-gradient(45% 45% at 10% 85%,rgba(143,58,50,.06),transparent 70%);
+}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:10px;
+  font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--risk);margin-bottom:28px;
+}
+.hero-badge::before{content:"";width:34px;height:1px;background:var(--risk)}
+h1{
+  font-family:var(--serif);
+  font-size:clamp(44px,8.4vw,110px);
+  line-height:1.02;
+  font-weight:800;
+  color:var(--ink);
+  letter-spacing:-.01em;
+  max-width:14ch;
+}
+h1 .accent{font-style:italic;font-weight:500;color:var(--gold);position:relative;display:inline-block}
+h1 .accent svg{
+  position:absolute;left:-2%;bottom:-.12em;width:104%;height:.28em;
+  overflow:visible;
+}
+h1 .accent svg path{
+  fill:none;stroke:var(--risk);stroke-width:7;stroke-linecap:round;
+  stroke-dasharray:900;stroke-dashoffset:900;
+  animation:draw 1.1s .5s ease forwards;
+}
+@keyframes draw{to{stroke-dashoffset:0}}
+.hero-sub{
+  margin-top:32px;max-width:560px;font-size:clamp(17px,2vw,20px);
+  color:var(--graphite);
+}
+.hero-sub strong{color:var(--ink)}
+.hero-actions{display:flex;gap:16px;margin-top:44px;flex-wrap:wrap;align-items:center}
+.btn{
+  display:inline-flex;align-items:center;gap:10px;
+  font-weight:600;font-size:16px;text-decoration:none;
+  padding:17px 34px;border-radius:100px;
+  transition:transform .25s,background .25s,box-shadow .25s;
+}
+.btn-primary{background:var(--ink);color:var(--ivory);box-shadow:0 12px 30px -12px rgba(17,20,24,.45)}
+.btn-primary:hover{background:var(--risk);transform:translateY(-2px)}
+.btn-ghost{color:var(--ink);border:1.5px solid rgba(17,20,24,.25)}
+.btn-ghost:hover{border-color:var(--gold);color:var(--gold)}
+.cta-note{font-size:13.5px;color:rgba(46,49,52,.65);margin-top:14px}
+.hero-meta{
+  margin-top:56px;display:flex;gap:clamp(24px,4vw,56px);flex-wrap:wrap;
+}
+.hero-meta div{font-size:14px;color:var(--graphite)}
+.hero-meta b{display:block;font-family:var(--serif);font-size:26px;color:var(--ink);font-weight:700}
+/* фишка-кубик */
+.dice{
+  position:absolute;right:clamp(20px,8vw,130px);top:52%;
+  width:clamp(90px,12vw,150px);aspect-ratio:1;
+  background:var(--ivory);
+  border:1.5px solid rgba(17,20,24,.15);
+  border-radius:22%;
+  box-shadow:0 30px 60px -25px rgba(17,20,24,.35);
+  display:grid;grid-template-columns:repeat(3,1fr);place-items:center;
+  padding:clamp(16px,2vw,26px);
+  transform:rotate(12deg);
+  animation:float 6s ease-in-out infinite;
+}
+.dice span{width:38%;aspect-ratio:1;border-radius:50%;background:var(--ink)}
+.dice span:nth-child(1){grid-area:1/1}
+.dice span:nth-child(2){grid-area:1/3;background:var(--gold)}
+.dice span:nth-child(3){grid-area:2/2}
+.dice span:nth-child(4){grid-area:3/1;background:var(--risk)}
+.dice span:nth-child(5){grid-area:3/3}
+@keyframes float{0%,100%{transform:rotate(12deg) translateY(0)}50%{transform:rotate(8deg) translateY(-16px)}}
+@media(max-width:900px){.dice{display:none}}
+.dice{cursor:pointer;user-select:none}
+.dice.rolling{animation:roll .7s cubic-bezier(.3,.1,.3,1)}
+@keyframes roll{
+  0%{transform:rotate(12deg) scale(1)}
+  30%{transform:rotate(190deg) scale(1.12)}
+  60%{transform:rotate(370deg) scale(.94)}
+  100%{transform:rotate(552deg) scale(1)}
+}
+.dice-hint{
+  position:absolute;right:clamp(20px,8vw,130px);top:calc(52% + clamp(100px,13vw,166px));
+  font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;
+  color:rgba(46,49,52,.5);text-align:center;width:clamp(90px,12vw,150px);
+  transition:opacity .3s;
+}
+@media(max-width:900px){.dice-hint{display:none}}
+/* выпавшая фишка игры */
+.dice-fact{
+  position:absolute;right:clamp(20px,8vw,130px);
+  top:calc(52% + clamp(126px,15vw,200px));
+  width:min(300px,34vw);
+  background:#fff;border:1px solid rgba(17,20,24,.1);border-radius:18px;
+  padding:20px 22px;text-align:left;
+  box-shadow:0 24px 50px -26px rgba(17,20,24,.5);
+  opacity:0;transform:translateY(-10px) scale(.96);pointer-events:none;
+  transition:opacity .4s,transform .4s cubic-bezier(.2,.8,.3,1);
+}
+.dice-fact.on{opacity:1;transform:none}
+.dice-fact .df-num{
+  font-family:var(--serif);font-size:13px;font-style:italic;color:var(--gold);
+  display:block;margin-bottom:7px;
+}
+.dice-fact p{font-size:14.5px;color:var(--ink);line-height:1.5}
+@media(max-width:900px){.dice-fact{display:none}}
+
+/* ---------- бегущая строка ---------- */
+.marquee{
+  background:var(--ink);color:var(--ivory);
+  overflow:hidden;white-space:nowrap;
+  padding:16px 0;
+  transform:rotate(-1.2deg) scale(1.02);
+}
+.marquee-track{display:inline-flex;gap:0;animation:scroll 32s linear infinite}
+.marquee span{
+  font-family:var(--serif);font-style:italic;font-size:18px;
+  padding:0 28px;display:inline-flex;align-items:center;gap:28px;
+}
+.marquee span::after{content:"✦";font-style:normal;color:var(--gold);font-size:13px}
+@keyframes scroll{to{transform:translateX(-50%)}}
+
+/* ---------- общие секции ---------- */
+section{padding:clamp(70px,10vw,130px) clamp(20px,5vw,64px)}
+.wrap{max-width:1160px;margin:0 auto}
+.kicker{
+  font-size:13px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:18px;display:flex;align-items:center;gap:12px;
+}
+.kicker::before{content:"";width:30px;height:1px;background:var(--gold)}
+h2{
+  font-family:var(--serif);font-weight:700;
+  font-size:clamp(32px,4.6vw,56px);line-height:1.1;color:var(--ink);
+  letter-spacing:-.01em;max-width:20ch;
+}
+h2 em{font-style:italic;color:var(--gold);font-weight:500}
+.lead{margin-top:22px;max-width:600px;font-size:18px}
+
+/* reveal */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease}
+.reveal.in{opacity:1;transform:none}
+
+/* ---------- про игру + квадрант ---------- */
+.about-grid{
+  display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(36px,6vw,90px);
+  align-items:start;margin-top:12px;
+}
+@media(max-width:860px){.about-grid{grid-template-columns:1fr}}
+.about-copy p{margin-top:18px}
+.about-copy p:first-child{margin-top:26px}
+/* квадрант доходов 2×2 */
+.quadrant{
+  margin-top:26px;
+  display:grid;grid-template-columns:1fr 1fr;
+  border:1.5px solid var(--ink);border-radius:20px;overflow:hidden;
+  background:#fff;
+  transform:rotate(1deg);
+  box-shadow:14px 14px 0 rgba(184,151,102,.25);
+}
+.q-cell{
+  padding:26px 24px;position:relative;
+}
+.q-cell:nth-child(1){border-right:1.5px solid var(--ink);border-bottom:1.5px solid var(--ink)}
+.q-cell:nth-child(2){border-bottom:1.5px solid var(--ink)}
+.q-cell:nth-child(3){border-right:1.5px solid var(--ink)}
+.q-cell b{
+  font-family:var(--serif);font-size:34px;font-weight:800;color:var(--ink);
+  display:block;line-height:1;
+}
+.q-cell .q-name{font-size:14px;font-weight:600;margin-top:6px;color:var(--ink)}
+.q-cell .q-note{font-size:13px;margin-top:4px;color:rgba(46,49,52,.7)}
+.q-cell{cursor:default;transition:background .35s}
+.q-cell:hover{background:rgba(184,151,102,.1)}
+.q-cell.q-hot{background:var(--gold-soft)}
+.q-cell.q-hot b{color:var(--gold)}
+/* пульсирующая метка цели в квадранте */
+.q-cell.q-hot::after{
+  content:"";position:absolute;top:16px;right:16px;
+  width:10px;height:10px;border-radius:50%;background:var(--gold);
+  box-shadow:0 0 0 0 rgba(184,151,102,.65);
+  animation:pulse 2.4s ease-out infinite;
+}
+@keyframes pulse{
+  0%{box-shadow:0 0 0 0 rgba(184,151,102,.6)}
+  70%{box-shadow:0 0 0 16px rgba(184,151,102,0)}
+  100%{box-shadow:0 0 0 0 rgba(184,151,102,0)}
+}
+.quadrant-caption{
+  margin-top:18px;font-size:13.5px;color:rgba(46,49,52,.7);
+  font-style:italic;text-align:right;padding-right:8px;
+}
+
+/* ---------- тёмная секция «крысиные бега» ---------- */
+.dark{
+  background:var(--navy);color:#E8E3D8;
+  position:relative;overflow:hidden;
+}
+.dark::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(70% 60% at 80% 10%,rgba(184,151,102,.14),transparent 65%);
+}
+.dark .kicker{color:var(--gold)}
+.dark h2{color:#F6F1E8}
+.dark .lead{color:rgba(232,227,216,.8)}
+.race-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:56px;
+}
+@media(max-width:860px){.race-grid{grid-template-columns:1fr}}
+.race-card{
+  border:1px solid rgba(246,241,232,.14);
+  border-radius:20px;padding:30px 28px;
+  background:rgba(246,241,232,.03);
+  transition:border-color .3s,transform .3s;
+}
+.race-card:hover{border-color:var(--gold);transform:translateY(-4px)}
+.race-card .num{
+  font-family:var(--serif);font-style:italic;font-size:15px;color:var(--gold);
+  display:block;margin-bottom:16px;
+}
+.race-card h3{font-family:var(--serif);font-size:22px;font-weight:700;color:#F6F1E8;margin-bottom:12px}
+.race-card p{font-size:15px;color:rgba(232,227,216,.75)}
+
+/* ---------- фирменные правила ---------- */
+.rules{counter-reset:rule}
+.rule{
+  display:grid;grid-template-columns:clamp(60px,8vw,110px) 1fr;
+  gap:clamp(16px,4vw,44px);align-items:start;
+  padding:34px 0;border-top:1px solid rgba(17,20,24,.14);
+}
+.rules .rule:first-of-type{margin-top:56px}
+.rule:last-child{border-bottom:1px solid rgba(17,20,24,.14)}
+.rule::before{
+  counter-increment:rule;
+  content:"0" counter(rule);
+  font-family:var(--serif);font-style:italic;font-weight:500;
+  font-size:clamp(34px,4.5vw,54px);line-height:1;color:var(--gold);
+}
+.rule h3{font-family:var(--serif);font-size:clamp(20px,2.4vw,26px);color:var(--ink);font-weight:700;margin-bottom:8px}
+.rule h3 mark{
+  background:none;color:var(--risk);font-style:italic;
+}
+.rule p{font-size:15.5px;max-width:620px}
+
+/* «и это не всё» — закрытые карты под списком фишек */
+.rule-more{
+  margin-top:60px;padding:clamp(34px,4vw,48px);
+  border:1.5px dashed rgba(184,151,102,.65);border-radius:24px;
+  background:linear-gradient(160deg,rgba(184,151,102,.1),rgba(246,241,232,0));
+  display:grid;grid-template-columns:1fr auto;gap:clamp(28px,5vw,60px);
+  align-items:center;
+}
+@media(max-width:820px){.rule-more{grid-template-columns:1fr;text-align:center;justify-items:center}}
+.rule-more h3{
+  font-family:var(--serif);font-size:clamp(24px,3.2vw,38px);font-weight:700;
+  color:var(--ink);line-height:1.15;max-width:16ch;
+}
+.rule-more h3 span{font-style:italic;color:var(--risk)}
+.rule-more p{margin-top:12px;font-size:15.5px;max-width:44ch}
+/* стопка карт рубашкой вверх */
+.face-down{display:flex;gap:14px;flex-shrink:0}
+.card-back{
+  width:clamp(74px,9vw,104px);aspect-ratio:.7;
+  border-radius:12px;position:relative;cursor:pointer;
+  background:
+    repeating-linear-gradient(45deg,rgba(246,241,232,.09) 0 6px,transparent 6px 12px),
+    var(--ink);
+  border:1.5px solid rgba(184,151,102,.45);
+  box-shadow:0 14px 30px -16px rgba(17,20,24,.55);
+  display:grid;place-items:center;
+  transition:transform .45s cubic-bezier(.2,.8,.3,1),box-shadow .45s,border-color .3s;
+}
+.card-back::after{
+  content:"?";font-family:var(--serif);font-weight:700;
+  font-size:clamp(26px,3vw,34px);color:var(--gold);opacity:.9;
+}
+.card-back:nth-child(1){transform:rotate(-7deg) translateY(4px)}
+.card-back:nth-child(2){transform:rotate(2deg)}
+.card-back:nth-child(3){transform:rotate(9deg) translateY(4px)}
+.face-down:hover .card-back:nth-child(1){transform:rotate(-13deg) translateY(-10px)}
+.face-down:hover .card-back:nth-child(2){transform:rotate(0deg) translateY(-16px)}
+.face-down:hover .card-back:nth-child(3){transform:rotate(15deg) translateY(-10px)}
+.face-down .card-back:hover{border-color:var(--gold);box-shadow:0 22px 44px -18px rgba(17,20,24,.7)}
+.card-back.shake{animation:shake .5s ease}
+@keyframes shake{
+  0%,100%{margin-left:0}
+  20%{margin-left:-7px}
+  40%{margin-left:7px}
+  60%{margin-left:-4px}
+  80%{margin-left:4px}
+}
+.peek{
+  margin-top:16px;min-height:22px;font-size:14.5px;color:var(--risk);
+  font-weight:500;opacity:0;transform:translateY(-4px);
+  transition:opacity .3s,transform .3s;
+}
+.peek.on{opacity:1;transform:none}
+
+/* ---------- как проходит вечер ---------- */
+.path{margin-top:60px;display:grid;gap:0}
+.step{
+  display:grid;grid-template-columns:clamp(84px,10vw,120px) 1fr;gap:clamp(18px,4vw,44px);
+  padding:30px 0;border-top:1px dashed rgba(17,20,24,.22);
+  align-items:start;
+}
+.step:last-child{border-bottom:1px dashed rgba(17,20,24,.22)}
+.step-time{
+  font-family:var(--serif);font-style:italic;font-size:clamp(19px,2.2vw,24px);
+  color:var(--gold);font-weight:600;white-space:nowrap;
+}
+.step h3{font-family:var(--serif);font-size:21px;color:var(--ink);font-weight:700;margin-bottom:6px}
+.step p{font-size:15.5px;max-width:640px}
+
+/* ---------- ведущий ---------- */
+.host-grid{
+  display:grid;grid-template-columns:.85fr 1.15fr;gap:clamp(36px,6vw,80px);
+  align-items:center;
+}
+@media(max-width:860px){.host-grid{grid-template-columns:1fr}}
+.host-photo{
+  aspect-ratio:4/5;border-radius:24px;
+  border:1px solid rgba(17,20,24,.1);
+  position:relative;overflow:hidden;
+  background:var(--ivory-deep);
+}
+.host-photo img{width:100%;height:100%;object-fit:cover;object-position:center 18%;display:block}
+.host-photo::after{
+  content:"";position:absolute;inset:14px;border:1px solid rgba(246,241,232,.35);
+  border-radius:16px;pointer-events:none;
+}
+
+/* ---------- галерея с игр ---------- */
+.gallery{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  grid-auto-rows:clamp(130px,15vw,200px);gap:14px;margin-top:52px;
+}
+.gallery figure{
+  overflow:hidden;border-radius:18px;position:relative;
+  background:var(--ivory-deep);border:1px solid rgba(17,20,24,.08);
+}
+.gallery img{
+  width:100%;height:100%;object-fit:cover;display:block;
+  transition:transform .6s cubic-bezier(.2,.7,.3,1),filter .4s;
+  filter:saturate(.92);
+}
+.gallery figure:hover img{transform:scale(1.05);filter:saturate(1)}
+.gallery .g-wide{grid-column:span 2}
+.gallery .g-tall{grid-row:span 2}
+/* кадрирование под лица на горизонтальных снимках */
+.gallery figure:nth-child(6) img{object-position:center 34%}
+.gallery figure:nth-child(5) img{object-position:center 42%}
+.gallery figure.missing{
+  border:1.5px dashed rgba(184,151,102,.7);background:var(--gold-soft);
+}
+.gallery figure.missing img{display:none}
+.gallery figure.missing::after{
+  content:attr(data-file);position:absolute;inset:0;
+  display:grid;place-items:center;padding:12px;text-align:center;
+  font-size:12px;color:rgba(46,49,52,.6);font-family:var(--sans);
+}
+@media(max-width:760px){
+  .gallery{grid-template-columns:repeat(2,1fr)}
+  .gallery .g-wide{grid-column:span 2}
+  .gallery .g-tall{grid-row:span 1}
+}
+
+/* ---------- отзывы ---------- */
+.reviews{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:52px;
+  align-items:start;
+}
+@media(max-width:900px){.reviews{grid-template-columns:1fr 1fr}}
+@media(max-width:620px){.reviews{grid-template-columns:1fr}}
+.review{
+  background:#fff;border:1px solid rgba(17,20,24,.09);border-radius:20px;
+  padding:28px 26px;position:relative;
+  box-shadow:0 14px 34px -28px rgba(17,20,24,.4);
+}
+.review::before{
+  content:"\201C";position:absolute;top:20px;right:22px;
+  font-family:var(--serif);font-size:76px;color:rgba(184,151,102,.2);line-height:0;
+}
+.review p{font-size:15px;position:relative;z-index:1}
+.review .r-who{
+  margin-top:18px;padding-top:16px;border-top:1px solid rgba(17,20,24,.09);
+  display:flex;align-items:center;gap:12px;
+}
+.review .r-ini{
+  width:38px;height:38px;flex-shrink:0;border-radius:50%;
+  background:var(--ink);color:var(--gold);
+  display:grid;place-items:center;
+  font-family:var(--serif);font-weight:700;font-size:15px;
+}
+.review .r-name{font-weight:600;font-size:14.5px;color:var(--ink);line-height:1.3}
+.review .r-note{font-size:12.5px;color:rgba(46,49,52,.6)}
+.review.r-short p{font-family:var(--serif);font-style:italic;font-size:19px;color:var(--ink);line-height:1.45}
+/* видео-кружок */
+.video-review{
+  grid-column:span 1;background:var(--navy);border:none;
+  display:flex;flex-direction:column;align-items:center;text-align:center;
+  padding:30px 26px;
+}
+.video-review::before{display:none}
+.video-review video{
+  width:min(210px,100%);aspect-ratio:1;border-radius:50%;
+  object-fit:cover;cursor:pointer;
+  border:2px solid rgba(184,151,102,.55);
+  background:#000;
+}
+.video-review .v-label{
+  margin-top:18px;font-size:13px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--gold);font-weight:600;
+}
+.video-review .v-note{font-size:13.5px;color:rgba(232,227,216,.7);margin-top:6px}
+.host-name{font-family:var(--serif);font-size:clamp(30px,3.6vw,44px);font-weight:700;color:var(--ink);line-height:1.1}
+.host-role{color:var(--gold);font-weight:600;font-size:15px;letter-spacing:.06em;text-transform:uppercase;margin-top:10px}
+.host-list{margin-top:24px;display:grid;gap:12px;list-style:none}
+.host-list li{
+  padding-left:26px;position:relative;font-size:15.5px;
+}
+.host-list li::before{
+  content:"";position:absolute;left:0;top:.55em;
+  width:12px;height:12px;border-radius:3px;background:var(--gold);
+  transform:rotate(45deg);
+}
+.host-quote{
+  margin-top:28px;padding:24px 28px;
+  background:var(--gold-soft);border-left:3px solid var(--gold);border-radius:0 16px 16px 0;
+  font-family:var(--serif);font-style:italic;font-size:19px;color:var(--ink);line-height:1.5;
+}
+
+/* ---------- билет и условия ---------- */
+.ticket-zone{
+  display:grid;grid-template-columns:1.15fr .85fr;gap:clamp(28px,4vw,48px);
+  margin-top:56px;align-items:stretch;
+}
+@media(max-width:900px){.ticket-zone{grid-template-columns:1fr}}
+/* билет */
+.ticket{
+  background:var(--ink);color:var(--ivory);border-radius:24px;
+  position:relative;overflow:hidden;
+  display:grid;grid-template-columns:1fr auto;
+}
+.ticket::before,.ticket::after{
+  content:"";position:absolute;width:34px;height:34px;border-radius:50%;
+  background:var(--ivory-deep);top:50%;transform:translateY(-50%);z-index:2;
+}
+.ticket::before{left:-17px}
+.ticket::after{right:-17px}
+.ticket-main{padding:clamp(30px,4vw,46px)}
+.ticket-main .t-label{font-size:12.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
+.ticket-main .t-price{
+  font-family:var(--serif);font-size:clamp(46px,6vw,72px);font-weight:800;color:var(--ivory);
+  line-height:1;margin-top:14px;
+}
+.ticket-main .t-price small{
+  display:block;font-family:var(--sans);font-size:.19em;font-weight:500;
+  letter-spacing:.1em;text-transform:uppercase;color:rgba(246,241,232,.6);
+  margin-top:12px;
+}
+.ticket-main ul{list-style:none;margin-top:22px;display:grid;gap:9px}
+.ticket-main li{font-size:14.5px;color:rgba(246,241,232,.85);padding-left:22px;position:relative}
+.ticket-main li::before{content:"✦";position:absolute;left:0;color:var(--gold);font-size:11px;top:.35em}
+.ticket-stub{
+  border-left:2px dashed rgba(246,241,232,.3);
+  padding:clamp(30px,4vw,46px) clamp(22px,3vw,34px);
+  display:grid;place-content:center;text-align:center;gap:8px;
+  min-width:150px;
+}
+.ticket-stub .stub-big{font-family:var(--serif);font-size:34px;font-weight:800;color:var(--gold);line-height:1.05}
+.ticket-stub .stub-note{font-size:12.5px;color:rgba(246,241,232,.7);max-width:14ch;margin:0 auto}
+@media(max-width:560px){
+  .ticket{grid-template-columns:1fr}
+  .ticket-stub{border-left:none;border-top:2px dashed rgba(246,241,232,.3)}
+  .ticket::before,.ticket::after{display:none}
+}
+/* карточки условий */
+.offers{display:grid;gap:18px}
+.offer{
+  background:#fff;border:1px solid rgba(17,20,24,.1);border-radius:20px;
+  padding:26px 28px;flex:1;
+}
+.offer .o-tag{
+  display:inline-block;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--risk);background:rgba(143,58,50,.08);
+  padding:5px 12px;border-radius:100px;margin-bottom:12px;
+}
+.offer h3{font-family:var(--serif);font-size:21px;font-weight:700;color:var(--ink);margin-bottom:8px}
+.offer p{font-size:14.5px}
+
+/* ---------- подарок ---------- */
+.gift{
+  margin-top:26px;
+  border:1.5px dashed var(--gold);border-radius:20px;
+  background:var(--gold-soft);
+  padding:clamp(26px,3.5vw,38px);
+  display:flex;gap:22px;align-items:center;flex-wrap:wrap;
+}
+.gift .g-icon{
+  font-family:var(--serif);font-style:italic;font-weight:700;font-size:34px;color:var(--gold);
+  border:1.5px solid var(--gold);border-radius:16px;
+  width:64px;height:64px;display:grid;place-items:center;flex-shrink:0;
+}
+.gift h3{font-family:var(--serif);font-size:21px;color:var(--ink);font-weight:700}
+.gift p{font-size:14.5px;max-width:560px;margin-top:4px}
+
+/* ---------- вопросы ---------- */
+.faq{max-width:760px;margin:52px auto 0}
+details{border-top:1px solid rgba(17,20,24,.12)}
+details:last-child{border-bottom:1px solid rgba(17,20,24,.12)}
+summary{
+  cursor:pointer;list-style:none;
+  padding:24px 44px 24px 4px;
+  font-family:var(--serif);font-size:20px;font-weight:600;color:var(--ink);
+  position:relative;transition:color .2s;
+}
+summary:hover{color:var(--gold)}
+summary::-webkit-details-marker{display:none}
+summary::after{
+  content:"+";position:absolute;right:8px;top:50%;transform:translateY(-50%);
+  font-family:var(--sans);font-weight:400;font-size:26px;color:var(--gold);
+  transition:transform .3s;
+}
+details[open] summary::after{transform:translateY(-50%) rotate(45deg)}
+details p{padding:0 4px 26px;font-size:15.5px;max-width:640px}
+
+/* ---------- финал ---------- */
+.final{
+  background:var(--navy);color:#F6F1E8;text-align:center;
+  position:relative;overflow:hidden;
+}
+.final::before{
+  content:"";position:absolute;inset:0;
+  background:radial-gradient(55% 55% at 50% 0%,rgba(184,151,102,.16),transparent 70%);
+  pointer-events:none;
+}
+.final h2{color:#F6F1E8;margin:0 auto;max-width:16ch}
+.final .lead{margin-left:auto;margin-right:auto;color:rgba(232,227,216,.8)}
+.final .btn-primary{background:var(--gold);color:var(--ink);margin-top:40px;box-shadow:0 16px 40px -14px rgba(184,151,102,.6)}
+.final .btn-primary:hover{background:#CBA878;transform:translateY(-2px)}
+.final .tg-note{margin-top:20px;font-size:14px;color:rgba(232,227,216,.6)}
+
+/* ---------- липкая кнопка на мобильных ---------- */
+.sticky-cta{
+  display:none;
+  position:fixed;left:0;right:0;bottom:0;z-index:99;
+  padding:12px 16px calc(12px + env(safe-area-inset-bottom));
+  background:rgba(246,241,232,.94);backdrop-filter:blur(12px);
+  border-top:1px solid rgba(17,20,24,.1);
+  transform:translateY(110%);transition:transform .35s ease;
+}
+.sticky-cta.show{transform:none}
+.sticky-cta a{
+  display:flex;justify-content:center;align-items:center;gap:8px;
+  background:var(--ink);color:var(--ivory);text-decoration:none;
+  font-weight:600;font-size:16px;padding:15px;border-radius:100px;
+}
+@media(max-width:760px){.sticky-cta{display:block}}
+
+/* ---------- контакты в финале ---------- */
+.socials{
+  display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:36px;
+}
+.socials a{
+  width:52px;height:52px;border-radius:50%;
+  display:grid;place-items:center;
+  border:1px solid rgba(246,241,232,.24);
+  color:rgba(246,241,232,.85);
+  transition:border-color .25s,color .25s,background .25s,transform .25s;
+}
+.socials a:hover{
+  border-color:var(--gold);color:var(--gold);
+  background:rgba(184,151,102,.1);transform:translateY(-3px);
+}
+.socials svg{width:22px;height:22px;fill:currentColor;display:block}
+/* иконки в подвале */
+.f-links .f-ico{
+  width:34px;height:34px;border-radius:50%;
+  display:inline-grid;place-items:center;
+  border:1px solid rgba(17,20,24,.18);color:var(--graphite);
+  transition:border-color .25s,color .25s;
+}
+.f-links .f-ico:hover{border-color:var(--gold);color:var(--gold)}
+.f-links .f-ico svg{width:16px;height:16px;fill:currentColor;display:block}
+.f-links{align-items:center}
+
+/* ---------- подвал ---------- */
+footer{
+  padding:36px clamp(20px,5vw,64px);
+  display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  font-size:13.5px;color:rgba(46,49,52,.65);
+}
+footer a{color:inherit}
+footer .f-links{display:flex;gap:18px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress" aria-hidden="true"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<header id="header">
+  <a class="logo" href="#">Деньги <em>с</em> Олегом</a>
+  <nav>
+    <a href="#game">Про игру</a>
+    <a href="#rules">Фишки</a>
+    <a href="#reviews">Отзывы</a>
+    <a href="#host">Ведущий</a>
+    <a href="#details">Билеты</a>
+    <a class="nav-cta" href="https://t.me/mrsuperoleg" target="_blank" rel="noopener">Записаться</a>
+  </nav>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="dice" id="dice" role="button" tabindex="0" aria-label="Бросить кубик и узнать фишку игры"><span></span><span></span><span></span><span></span><span></span></div>
+  <div class="dice-hint" id="diceHint">Бросьте кубик</div>
+  <div class="dice-fact" id="diceFact"><span class="df-num"></span><p></p></div>
+  <div class="wrap">
+    <div class="hero-badge">Настольная игра · Москва</div>
+    <h1>Денежный <span class="accent">поток<svg viewBox="0 0 300 24" aria-hidden="true"><path d="M4 16 C 60 4, 150 22, 296 8"/></svg></span></h1>
+    <p class="hero-sub">Игра Роберта Кийосаки, в которой за четыре часа вы проживаете <strong>20 лет финансовых решений</strong> — сделки, кредиты, инвестиции — и видите, что на самом деле мешает вам выйти на доход с капитала. Без риска для настоящего кошелька.</p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="https://t.me/mrsuperoleg" target="_blank" rel="noopener">Занять место за столом</a>
+      <a class="btn btn-ghost" href="#game">Что за игра?</a>
+    </div>
+    <div class="cta-note">Бронь — одним сообщением в Telegram. Отвечаем в течение пары часов.</div>
+    <div class="hero-meta">
+      <div><b data-count="4" data-suffix=" часа">4 часа</b>правила + игра + разбор</div>
+      <div><b data-count="8" data-prefix="4–">4–8</b>человек за столом</div>
+      <div><b data-count="5000" data-suffix=" ₽" data-space>5 000 ₽</b>за игрока · 2 билета = 3</div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-track">
+    <span>Активы против пассивов</span><span>Штраф за фразу «нет денег»</span><span>Две минуты на ход</span><span>Песочные часы вместо календаря</span><span>Живая игра, не лекция</span>
+    <span>Активы против пассивов</span><span>Штраф за фразу «нет денег»</span><span>Две минуты на ход</span><span>Песочные часы вместо календаря</span><span>Живая игра, не лекция</span>
+  </div>
+</div>
+
+<!-- ПРО ИГРУ -->
+<section id="game">
+  <div class="wrap">
+    <div class="about-grid">
+      <div class="about-copy reveal">
+        <div class="kicker">Что это</div>
+        <h2>Тренажёр решений, а не <em>настолка на вечер</em></h2>
+        <p>«Денежный поток» (CASHFLOW) придумал Роберт Кийосаки — автор книги «Богатый папа, бедный папа». Каждый игрок начинает с обычной профессией, зарплатой и расходами — и пытается выбраться из круга «работа — зарплата — расходы» на уровень, где доход приносят активы, а не часы на работе.</p>
+        <p>Звучит просто. Но за столом вы за пару часов увидите свои настоящие привычки: кто боится любой сделки, кто хватает всё подряд в кредит, кто ждёт «идеального момента» двадцать лет. Игра вскрывает это быстрее любой консультации.</p>
+        <p>Рядом — финансовый советник: после каждого круга он объясняет, как то же самое работает в реальной жизни в 2026 году — вклады, недвижимость, фондовый рынок, страховые программы.</p>
+      </div>
+      <div class="reveal">
+        <div class="quadrant">
+          <div class="q-cell"><b>Р</b><div class="q-name">Работа по найму</div><div class="q-note">меняете время на деньги</div></div>
+          <div class="q-cell"><b>С</b><div class="q-name">Сам на себя</div><div class="q-note">работаете больше всех</div></div>
+          <div class="q-cell"><b>Б</b><div class="q-name">Бизнес</div><div class="q-note">на вас работает система</div></div>
+          <div class="q-cell q-hot"><b>И</b><div class="q-name">Инвестор</div><div class="q-note">на вас работают деньги</div></div>
+        </div>
+        <div class="quadrant-caption">Квадрант источников дохода — карта, по которой идёт вся игра. Цель — правый нижний угол.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- КОМУ / КРЫСИНЫЕ БЕГА -->
+<section class="dark">
+  <div class="wrap">
+    <div class="kicker reveal">Узнаёте себя?</div>
+    <h2 class="reveal">Круг «работа — зарплата — расходы» и как из него <em>выходят</em></h2>
+    <p class="lead reveal">В игре этот круг называется «крысиные бега». Большинство людей крутится в нём всю жизнь — не потому что мало зарабатывают, а потому что ни разу не репетировали другие решения.</p>
+    <div class="race-grid">
+      <div class="race-card reveal">
+        <span class="num">— 01</span>
+        <h3>Доход растёт, а денег нет</h3>
+        <p>Зарплата выросла — выросли и расходы. Знакомая история: чем больше зарабатываете, тем быстрее всё утекает. В игре видно, почему так происходит и где именно дыра.</p>
+      </div>
+      <div class="race-card reveal">
+        <span class="num">— 02</span>
+        <h3>Деньги лежат и обесцениваются</h3>
+        <p>Накопили — и боитесь трогать: «а вдруг прогорит». За столом можно наконец попробовать вложить — и ошибиться без последствий, чтобы в жизни не ошибаться.</p>
+      </div>
+      <div class="race-card reveal">
+        <span class="num">— 03</span>
+        <h3>Инвестируете наугад</h3>
+        <p>Купили то, что посоветовал знакомый или менеджер банка. Игра учит считать сделку до покупки: сколько приносит, сколько съедает и когда окупится.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ФИРМЕННЫЕ ПРАВИЛА -->
+<section id="rules">
+  <div class="wrap">
+    <div class="kicker reveal">Не как у всех</div>
+    <h2 class="reveal">Фишки игры <em>у Олега</em></h2>
+    <p class="lead reveal">Базовые правила Кийосаки — только начало. За моим столом действуют дополнительные правила, которые делают игру ближе к реальной жизни.</p>
+    <div class="rules">
+      <div class="rule reveal">
+        <div>
+          <h3>Штраф за <mark>«нет денег»</mark></h3>
+          <p>Сказали «не могу себе позволить», «мне не хватает» — платите игровой штраф, и с каждым разом он удваивается. К концу игры даже самые упорные начинают спрашивать «как я могу это купить?» вместо «почему я не могу».</p>
+        </div>
+      </div>
+      <div class="rule reveal">
+        <div>
+          <h3>Две минуты на ход</h3>
+          <p>В жизни хорошие сделки не ждут, пока вы «подумаете с недельку». Таймер учит считать быстро и решать по цифрам, а не по настроению.</p>
+        </div>
+      </div>
+      <div class="rule reveal">
+        <div>
+          <h3>Финансовые инструменты — как настоящие</h3>
+          <p>В начале игры вам предложат страховые и накопительные программы с реальными условиями. Взять можно любые — а вот что они дадут к концу игры, узнаете на собственном опыте. Ровно так это устроено и в жизни.</p>
+        </div>
+      </div>
+      <div class="rule reveal">
+        <div>
+          <h3>Карточки под сегодняшний день</h3>
+          <p>Стандартную колоду дополняют сделки с современными реалиями — то, с чем вы сталкиваетесь сейчас, а не в Америке девяностых.</p>
+        </div>
+      </div>
+      <div class="rule-more reveal">
+        <div>
+          <h3>И это <span>далеко не все</span> фишки</h3>
+          <p>Здесь только те, о которых можно рассказать заранее. Остальные ждут вас за столом — от неожиданных условий сделок до правил, которые включаются в середине игры. Заранее не подсмотреть: в этом и смысл.</p>
+          <div class="peek" id="peek"></div>
+        </div>
+        <div class="face-down" id="faceDown" title="Попробуйте подсмотреть">
+          <div class="card-back"></div>
+          <div class="card-back"></div>
+          <div class="card-back"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- КАК ПРОХОДИТ -->
+<section id="evening" style="background:var(--ivory-deep)">
+  <div class="wrap">
+    <div class="kicker reveal">Сценарий</div>
+    <h2 class="reveal">Четыре часа <em>по делу</em></h2>
+    <div class="path">
+      <div class="step reveal">
+        <div class="step-time">0:00</div>
+        <div><h3>Знакомство и правила</h3><p>Каждый называет свой главный запрос на игру. Правила объясняются за 20 минут — играть смогут даже те, кто ни разу не держал в руках игральный кубик.</p></div>
+      </div>
+      <div class="step reveal">
+        <div class="step-time">0:30</div>
+        <div><h3>Старт: у каждого своя жизнь</h3><p>Вы вытягиваете профессию, заполняете свою финансовую ведомость — зарплата, расходы, кредиты. Пять минут на стратегию, и поехали.</p></div>
+      </div>
+      <div class="step reveal">
+        <div class="step-time">1:00</div>
+        <div><h3>Сделки, переговоры, повороты судьбы</h3><p>Недвижимость, доли в бизнесе, акции, неожиданные расходы. Игроки торгуются между собой, берут кредиты, продают активы — стол оживает.</p></div>
+      </div>
+      <div class="step reveal">
+        <div class="step-time">2:30</div>
+        <div><h3>Выход на скоростную дорожку</h3><p>Кто-то выбирается из круга «работа — зарплата» — его доход с активов превышает расходы. Обычно в этот момент остальные начинают играть совсем иначе.</p></div>
+      </div>
+      <div class="step reveal">
+        <div class="step-time">3:00</div>
+        <div><h3>Разбираем, что получилось</h3><p>Почему выиграл тот, кто выиграл? Какие ходы сработали бы в реальной жизни, а какие закончились бы потерей денег? Каждый уходит со своим следующим шагом — и с игровой ведомостью на память, чтобы сверяться с ней в жизни.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ВЕДУЩИЙ -->
+<section id="host">
+  <div class="wrap">
+    <div class="host-grid">
+      <div class="host-photo reveal">
+        <img src="assets/oleg.jpg" alt="Олег Иванов, финансовый советник и ведущий игры">
+      </div>
+      <div class="reveal">
+        <div class="kicker">Ведущий</div>
+        <div class="host-name">Олег Иванов</div>
+        <div class="host-role">Финансовый советник · инвестиции</div>
+        <ul class="host-list">
+          <li>15+ лет в финансах: банки, страховые компании, инвестиционный консалтинг — знаю эти продукты изнутри.</li>
+          <li>Практикующий инвестор: недвижимость, акции, первичные размещения, цифровые активы, доли в бизнесе.</li>
+          <li>Строил систему и инструменты управления для компании с портфелем инвестиций свыше 250 млн долларов — и много общался с её клиентами: как они думают о деньгах, чего хотят и что делают на самом деле.</li>
+          <li>Сертифицированный коуч ICF — разбор после игры будет не лекцией, а работой с вашими решениями.</li>
+        </ul>
+        <p style="margin-top:20px">Беру фиксированную плату и не получаю процент с продуктов — поэтому за игровым столом я на вашей стороне, а не на стороне тех, кто хочет вам что-то продать.</p>
+        <div class="host-quote">«Ты профи: быстро принимал решения, не боялся рисковать там, где я собиралась это делать, а после игры объяснил почему — и я поняла, что это был просчитанный риск».<br><span style="font-family:var(--sans);font-style:normal;font-size:14px;color:rgba(46,49,52,.65);display:block;margin-top:12px">Ольга Игнатьева, участница игры</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- БИЛЕТЫ -->
+<section id="details" style="background:var(--ivory-deep)">
+  <div class="wrap">
+    <div class="kicker reveal">Билеты</div>
+    <h2 class="reveal">Место, время, <em>цена</em></h2>
+    <div class="ticket-zone">
+      <div class="ticket reveal">
+        <div class="ticket-main">
+          <div class="t-label">Участие в игре · Москва</div>
+          <div class="t-price">5 000&nbsp;₽<small>за одного игрока</small></div>
+          <ul>
+            <li>4 часа: правила, игра, разбор ваших ходов</li>
+            <li>За столом 4–8 человек. Групп больше — ставим несколько столов</li>
+            <li>Все игровые материалы и бланки — на месте</li>
+            <li>Ваша игровая ведомость остаётся с вами</li>
+            <li>Аудит личных финансов в подарок каждому</li>
+          </ul>
+        </div>
+        <div class="ticket-stub">
+          <div class="stub-big">2 = 3</div>
+          <div class="stub-note">купите два билета — третий в подарок</div>
+        </div>
+      </div>
+      <div class="offers reveal">
+        <div class="offer">
+          <div class="o-tag">Для своей компании</div>
+          <h3>От 5 человек — ваша дата</h3>
+          <p>Соберите коллег, друзей или семью — от пяти участников подбираем время и день отдельно под вас. Хоть будний вечер, хоть выходное утро.</p>
+        </div>
+        <div class="offer">
+          <div class="o-tag">Где и когда</div>
+          <h3>Москва, центр</h3>
+          <p>Пространство в 10 минутах от метро, точный адрес — после записи. Ближайшие даты открытых игр уточняйте в Telegram — столы набираются быстро.</p>
+        </div>
+      </div>
+    </div>
+    <div class="gift reveal">
+      <div class="g-icon">₽</div>
+      <div>
+        <h3>Подарок каждому участнику</h3>
+        <p>Аудит личных финансов: после игры заполняете короткий тест — и бесплатно получаете общую оценку своей финансовой ситуации с комментариями советника.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ОТЗЫВЫ -->
+<section id="reviews">
+  <div class="wrap">
+    <div class="kicker reveal">Отзывы участников</div>
+    <h2 class="reveal">Что говорят <em>после игры</em></h2>
+    <div class="reviews">
+      <div class="review reveal">
+        <p>Мой первый опыт игры — очень круто проводишь! Осознала паттерны, которыми руководствуюсь в бизнесе, даже не подозревала, что они есть. Всем рекомендую играть хотя бы раз в квартал: интересно, как другие игроки тоже подсвечивают точки роста.</p>
+        <div class="r-who"><div class="r-ini">НБ</div><div><div class="r-name">Наталья Браун</div><div class="r-note">предприниматель, недвижимость</div></div></div>
+      </div>
+      <div class="review reveal">
+        <p>Играл впервые, и здорово, что удалось увидеть свои действия в сравнении с жизненными ситуациями. Особенно то, что правила игры не ограничивают твои реальные возможности и принимаемые решения. Спасибо за новый взгляд на финансы и отлично проведённое время!</p>
+        <div class="r-who"><div class="r-ini">СР</div><div><div class="r-name">Сергей Рубцов</div><div class="r-note">играл впервые</div></div></div>
+      </div>
+      <div class="review video-review reveal">
+        <video src="assets/otzyv-video.mp4" playsinline preload="metadata" controls></video>
+        <div class="v-label">Отзыв голосом</div>
+        <div class="v-note">45 секунд сразу после игры</div>
+      </div>
+      <div class="review reveal">
+        <p>Пожалуй, для меня это самая трансформационная и меняющая мышление настольная игра. На ней подсвечиваются паттерны из реальной жизни — и ограничивающие, и развивающие. Учит строить партнёрства и не бояться принимать дерзкие решения.</p>
+        <div class="r-who"><div class="r-ini">А</div><div><div class="r-name">Андрей</div><div class="r-note">участник игры</div></div></div>
+      </div>
+      <div class="review reveal">
+        <p>Очень понравилось, как всё организовано: тайминг, песочные часы, карточки с современными реалиями, шуточки в течение игры. Однозначно буду рекомендовать тебя своим друзьям.</p>
+        <div class="r-who"><div class="r-ini">ОИ</div><div><div class="r-name">Ольга Игнатьева</div><div class="r-note">брала финсоветника в игре</div></div></div>
+      </div>
+      <div class="review r-short reveal">
+        <p>Олег, ты один из лучших ведущих CashFlow, с кем я играла! Спасибо тебе за игру!</p>
+        <div class="r-who"><div class="r-ini">ЕШ</div><div><div class="r-name">Елизавета Шидакова</div><div class="r-note">играла с разными ведущими</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ГАЛЕРЕЯ -->
+<section id="gallery" style="background:var(--ivory-deep)">
+  <div class="wrap">
+    <div class="kicker reveal">Как это выглядит</div>
+    <h2 class="reveal">Живой стол, <em>а не картинка</em></h2>
+    <div class="gallery reveal" id="gallery">
+      <figure class="g-wide g-tall" data-file="assets/games/game-1.jpg"><img src="assets/games/game-1.jpg" alt="Игроки за столом «Денежный поток»" loading="lazy"></figure>
+      <figure data-file="assets/games/game-2.jpg"><img src="assets/games/game-2.jpg" alt="Игровое поле CASHFLOW с фишками и карточками" loading="lazy"></figure>
+      <figure data-file="assets/games/game-3.jpg"><img src="assets/games/game-3.jpg" alt="Участница игры разбирает свою ведомость" loading="lazy"></figure>
+      <figure data-file="assets/games/game-4.jpg"><img src="assets/games/game-4.jpg" alt="Песочные часы и игровые деньги на столе" loading="lazy"></figure>
+      <figure data-file="assets/games/game-5.jpg"><img src="assets/games/game-5.jpg" alt="Разбор после игры" loading="lazy"></figure>
+      <figure class="g-wide" data-file="assets/games/game-6.jpg"><img src="assets/games/game-6.jpg" alt="Общее фото участников после игры" loading="lazy"></figure>
+    </div>
+  </div>
+</section>
+
+<!-- ВОПРОСЫ -->
+<section>
+  <div class="wrap">
+    <div class="kicker reveal">Вопросы</div>
+    <h2 class="reveal">Что обычно <em>спрашивают</em></h2>
+    <div class="faq reveal">
+      <details>
+        <summary>Я ничего не понимаю в инвестициях. Мне будет сложно?</summary>
+        <p>Нет. Правила объясняются за 20 минут, считать помогает ведущий. Половина участников приходит вообще без опыта — и именно они чаще всего уходят с самыми сильными открытиями.</p>
+      </details>
+      <details>
+        <summary>Это продажа каких-то курсов или услуг?</summary>
+        <p>Нет. Вы платите за игру — и получаете игру и разбор. Никаких «специальных предложений только сегодня» в конце вечера не будет. Если захотите продолжить работу с советником — сами спросите.</p>
+      </details>
+      <details>
+        <summary>Чем это отличается от того, чтобы купить игру и играть дома?</summary>
+        <p>Домашняя партия — это весело, но без разбора игра остаётся настолкой. Здесь действуют дополнительные правила, приближающие игру к жизни, а после каждого круга вы получаете связку с реальностью: как такая же сделка выглядит в Москве в 2026 году и где в ней подвох.</p>
+      </details>
+      <details>
+        <summary>Нас больше восьми. Мы не поместимся?</summary>
+        <p>Поместитесь: ставим несколько столов и играем параллельно. А если вас пятеро и больше — подберём отдельную дату и время под вашу компанию.</p>
+      </details>
+      <details>
+        <summary>Как работает «два билета — третий в подарок»?</summary>
+        <p>Просто: оплачиваете два места — приводите третьего участника бесплатно. Удобно идти втроём с друзьями или коллегами. Напишите в Telegram, и всё оформим.</p>
+      </details>
+      <details>
+        <summary>Что взять с собой?</summary>
+        <p>Ничего. Все игровые материалы и бланки на месте. Разве что блокнот, если любите записывать — после разбора обычно есть что.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ФИНАЛ -->
+<section class="final">
+  <div class="wrap">
+    <div class="kicker reveal" style="justify-content:center">За столом 4–8 мест</div>
+    <h2 class="reveal">Один вечер — и вы видите свои деньги <em>иначе</em></h2>
+    <p class="lead reveal">Напишите в Telegram слово «Игра» — пришлём ближайшие даты и забронируем место за столом.</p>
+    <a class="btn btn-primary reveal" href="https://t.me/mrsuperoleg" target="_blank" rel="noopener">Написать в Telegram</a>
+    <div class="tg-note reveal">@mrsuperoleg · отвечаем в течение пары часов</div>
+    <div class="socials reveal">
+      <a href="https://t.me/dengi_s_olegom" target="_blank" rel="noopener" title="Telegram-канал «Деньги с Олегом»" aria-label="Telegram-канал «Деньги с Олегом»">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/></svg>
+      </a>
+      <a href="https://instagram.com/dengi_s_olegom" target="_blank" rel="noopener" title="Instagram «Деньги с Олегом»" aria-label="Instagram «Деньги с Олегом»">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41-.56-.22-.96-.48-1.38-.9-.42-.42-.68-.82-.9-1.38-.16-.42-.36-1.06-.41-2.23C2.17 15.58 2.16 15.2 2.16 12s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41C8.42 2.17 8.8 2.16 12 2.16zm0 1.98c-3.14 0-3.51.01-4.75.07-1.15.05-1.77.24-2.18.4-.55.21-.94.47-1.35.88-.41.41-.67.8-.88 1.35-.16.41-.35 1.03-.4 2.18-.06 1.24-.07 1.61-.07 4.75s.01 3.51.07 4.75c.05 1.15.24 1.77.4 2.18.21.55.47.94.88 1.35.41.41.8.67 1.35.88.41.16 1.03.35 2.18.4 1.24.06 1.61.07 4.75.07s3.51-.01 4.75-.07c1.15-.05 1.77-.24 2.18-.4.55-.21.94-.47 1.35-.88.41-.41.67-.8.88-1.35.16-.41.35-1.03.4-2.18.06-1.24.07-1.61.07-4.75s-.01-3.51-.07-4.75c-.05-1.15-.24-1.77-.4-2.18-.21-.55-.47-.94-.88-1.35-.41-.41-.8-.67-1.35-.88-.41-.16-1.03-.35-2.18-.4-1.24-.06-1.61-.07-4.75-.07zm0 3.37a5.49 5.49 0 110 10.98 5.49 5.49 0 010-10.98zm0 1.98a3.51 3.51 0 100 7.02 3.51 3.51 0 000-7.02zm5.71-3.52a1.28 1.28 0 110 2.56 1.28 1.28 0 010-2.56z"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<div class="sticky-cta" id="stickyCta">
+  <a href="https://t.me/mrsuperoleg" target="_blank" rel="noopener">Занять место · 5 000 ₽</a>
+</div>
+
+<footer>
+  <div>© 2026 · ИП Иванов Олег Олегович · ОГРНИП 326480000024935</div>
+  <div class="f-links">
+    <a href="mailto:superolegbiz@yandex.ru">superolegbiz@yandex.ru</a>
+    <a class="f-ico" href="https://t.me/dengi_s_olegom" target="_blank" rel="noopener" title="Telegram-канал «Деньги с Олегом»" aria-label="Telegram-канал «Деньги с Олегом»">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/></svg>
+    </a>
+    <a class="f-ico" href="https://instagram.com/dengi_s_olegom" target="_blank" rel="noopener" title="Instagram «Деньги с Олегом»" aria-label="Instagram «Деньги с Олегом»">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41-.56-.22-.96-.48-1.38-.9-.42-.42-.68-.82-.9-1.38-.16-.42-.36-1.06-.41-2.23C2.17 15.58 2.16 15.2 2.16 12s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41C8.42 2.17 8.8 2.16 12 2.16zm0 1.98c-3.14 0-3.51.01-4.75.07-1.15.05-1.77.24-2.18.4-.55.21-.94.47-1.35.88-.41.41-.67.8-.88 1.35-.16.41-.35 1.03-.4 2.18-.06 1.24-.07 1.61-.07 4.75s.01 3.51.07 4.75c.05 1.15.24 1.77.4 2.18.21.55.47.94.88 1.35.41.41.8.67 1.35.88.41.16 1.03.35 2.18.4 1.24.06 1.61.07 4.75.07s3.51-.01 4.75-.07c1.15-.05 1.77-.24 2.18-.4.55-.21.94-.47 1.35-.88.41-.41.67-.8.88-1.35.16-.41.35-1.03.4-2.18.06-1.24.07-1.61.07-4.75s-.01-3.51-.07-4.75c-.05-1.15-.24-1.77-.4-2.18-.21-.55-.47-.94-.88-1.35-.41-.41-.8-.67-1.35-.88-.41-.16-1.03-.35-2.18-.4-1.24-.06-1.61-.07-4.75-.07zm0 3.37a5.49 5.49 0 110 10.98 5.49 5.49 0 010-10.98zm0 1.98a3.51 3.51 0 100 7.02 3.51 3.51 0 000-7.02zm5.71-3.52a1.28 1.28 0 110 2.56 1.28 1.28 0 010-2.56z"/></svg>
+    </a>
+  </div>
+</footer>
+
+<script>
+// шапка при прокрутке + липкая кнопка после первого экрана
+const header=document.getElementById('header');
+const sticky=document.getElementById('stickyCta');
+addEventListener('scroll',()=>{
+  header.classList.toggle('scrolled',scrollY>30);
+  sticky.classList.toggle('show',scrollY>innerHeight*.8&&scrollY<document.body.scrollHeight-innerHeight*1.6);
+},{passive:true});
+// появление блоков
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12});
+document.querySelectorAll('.reveal').forEach((el,i)=>{el.style.transitionDelay=(i%4)*70+'ms';io.observe(el)});
+// если фото ещё не положены в assets/games — подсказка вместо битой картинки
+document.querySelectorAll('#gallery img').forEach(img=>{
+  img.addEventListener('error',()=>{
+    const f=img.closest('figure');
+    f.classList.add('missing');
+    f.setAttribute('data-file','сюда: '+f.dataset.file);
+  });
+});
+
+const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// полоса прогресса
+const bar=document.getElementById('progress');
+addEventListener('scroll',()=>{
+  const max=document.documentElement.scrollHeight-innerHeight;
+  bar.style.width=(max>0?scrollY/max*100:0)+'%';
+},{passive:true});
+
+// всплывающее уведомление
+let toastTimer;
+const toastEl=document.getElementById('toast');
+function toast(msg,ms=3600){
+  toastEl.textContent=msg;
+  toastEl.classList.add('on');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>toastEl.classList.remove('on'),ms);
+}
+
+// счётчики цифр
+const nums=document.querySelectorAll('[data-count]');
+const numIO=new IntersectionObserver(es=>es.forEach(e=>{
+  if(!e.isIntersecting)return;
+  numIO.unobserve(e.target);
+  const el=e.target,to=+el.dataset.count;
+  const pre=el.dataset.prefix||'',suf=el.dataset.suffix||'';
+  const spaced=el.hasAttribute('data-space');
+  const fmt=v=>pre+(spaced?v.toLocaleString('ru-RU'):v)+suf;
+  if(reduced){el.textContent=fmt(to);return}
+  const dur=1100,t0=performance.now();
+  (function tick(now){
+    const p=Math.min(1,(now-t0)/dur);
+    el.textContent=fmt(Math.round(to*(1-Math.pow(1-p,3))));
+    if(p<1)requestAnimationFrame(tick);
+  })(t0);
+},{threshold:.6}));
+nums.forEach(n=>numIO.observe(n));
+
+// кубик: следит за курсором и бросается по клику
+const dice=document.getElementById('dice');
+const diceFact=document.getElementById('diceFact');
+const diceHint=document.getElementById('diceHint');
+const FACTS=[
+  'За фразу «нет денег» — игровой штраф. И с каждым разом он вдвое больше.',
+  'На ход — не больше двух минут. Песочные часы не ждут, пока вы подумаете.',
+  'В колоде есть сделки, которых нет в коробочной версии — под сегодняшний день.',
+  'Финансовые инструменты в игре — с реальными условиями. Брать или нет, решаете вы.',
+  'Выигрывает не тот, у кого больше денег, а тот, чей доход с активов обогнал расходы.',
+  'Свою игровую ведомость вы забираете домой — чтобы сверяться с ней в жизни.'
+];
+if(dice){
+  let rolling=false;
+  const roll=()=>{
+    if(rolling)return;
+    rolling=true;
+    if(diceHint)diceHint.style.opacity='0';
+    diceFact.classList.remove('on');
+    dice.style.animation='';
+    dice.classList.remove('rolling');
+    void dice.offsetWidth;
+    dice.classList.add('rolling');
+    setTimeout(()=>{
+      const i=Math.floor(Math.random()*FACTS.length);
+      diceFact.querySelector('.df-num').textContent='Выпало '+(i+1)+' — фишка игры';
+      diceFact.querySelector('p').textContent=FACTS[i];
+      diceFact.classList.add('on');
+      dice.classList.remove('rolling');
+      rolling=false;
+    },reduced?0:700);
+  };
+  dice.addEventListener('click',roll);
+  dice.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();roll()}});
+  if(matchMedia('(pointer:fine)').matches&&!reduced){
+    addEventListener('mousemove',e=>{
+      if(rolling)return;
+      const x=(e.clientX/innerWidth-.5)*14,y=(e.clientY/innerHeight-.5)*10;
+      dice.style.transform=`rotate(${12+x}deg) translate(${x}px,${y}px)`;
+    },{passive:true});
+    dice.style.animation='none';
+  }
+}
+
+// закрытые карты в блоке «и это не все фишки»
+const peekEl=document.getElementById('peek');
+const PEEKS=[
+  'Не подсматривайте — испортите себе вечер.',
+  'Всё равно не откроется. Приходите за стол.',
+  'Эта откроется только в середине игры.',
+  'Тут написано «попробуйте ещё раз».'
+];
+let peekN=0;
+document.querySelectorAll('#faceDown .card-back').forEach(card=>{
+  card.addEventListener('click',()=>{
+    card.classList.remove('shake');
+    void card.offsetWidth;
+    card.classList.add('shake');
+    peekEl.textContent=PEEKS[peekN++%PEEKS.length];
+    peekEl.classList.add('on');
+  });
+});
+
+// кнопки «написать в telegram»: кладём готовый текст в буфер
+const TG_TEXT='Привет, хочу записаться на игру';
+document.querySelectorAll('a[href*="t.me/mrsuperoleg"]').forEach(a=>{
+  a.addEventListener('click',()=>{
+    try{navigator.clipboard&&navigator.clipboard.writeText(TG_TEXT)}catch(e){}
+    toast('Текст «'+TG_TEXT+'» скопирован — вставьте его в чат');
+  });
+});
+</script>
+</body>
+</html>
